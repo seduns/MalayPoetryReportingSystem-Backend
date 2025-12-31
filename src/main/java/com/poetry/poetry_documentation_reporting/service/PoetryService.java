@@ -12,7 +12,6 @@ public interface PoetryService {
     public Poetry getPoetry(Long poetryId) throws Exception;
     public List<Poetry> getAllPoetry() throws Exception;
     public Poetry updatePoetry(Long poetryId, PoetryRequest request) throws Exception;
-
     public PoetryStatusResponse updatePoetryStatus(Long poetryId, String status) throws Exception;
 
 }

@@ -77,7 +77,6 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = authRepository.save(newUser);
 
-
         if (user.getRole() == USER_ROLE.USER_PUBLIC) {
             Public publicUser = new Public();
             publicUser.setUser(savedUser); // @MapsId → ID auto ikut User ID
@@ -115,6 +114,7 @@ public class AuthServiceImpl implements AuthService {
         response.setStatus("register_success");
         response.setMessage("Register Success " + savedUser.getUsername());
         response.setRole(savedUser.getRole());
+        response.setAccountId(savedUser.getId());
 
         return response;
     }
@@ -131,10 +131,14 @@ public class AuthServiceImpl implements AuthService {
         );
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        String role = authorities.isEmpty() ? null : authorities.iterator().next().getAuthority();
+        String role = authorities.isEmpty()
+                ? null
+                : authorities.iterator().next().getAuthority();
 
         String accessToken = jwtProvider.generateAccessToken(authentication);
         String freshToken = jwtProvider.generateFreshToken(email);
+
+        Optional<User> user = authRepository.findByEmail(email);
 
         AuthResponse authResponse = new AuthResponse();
         authResponse.setRefreshToken(freshToken);
@@ -142,7 +146,11 @@ public class AuthServiceImpl implements AuthService {
         authResponse.setMessage("Login Success");
         authResponse.setStatus("login_success");
         authResponse.setRole(USER_ROLE.valueOf(role));
+        authResponse.setAccountId(user.get().getId());
+
 
         return authResponse;
     }
+
+
 }

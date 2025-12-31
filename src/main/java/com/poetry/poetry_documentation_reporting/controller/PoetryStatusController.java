@@ -20,6 +20,5 @@ public class PoetryStatusController {
         return ResponseEntity.ok(poetryService.updatePoetryStatus(poetryId, status));
     }
 
-
 }
 

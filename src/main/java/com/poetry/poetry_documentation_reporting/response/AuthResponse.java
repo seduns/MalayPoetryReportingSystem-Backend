@@ -11,5 +11,6 @@ public class AuthResponse {
     private String status;
     private String refreshToken;
     private USER_ROLE role;
+    private long accountId;
 
 }

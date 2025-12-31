@@ -17,6 +17,7 @@ public class CoauthorController {
 
     private final CoauthorService coauthorService;
 
+
     @PostMapping("/{poetryId}/coauthors")
     public ResponseEntity<List<CoauthorResponse>> addCoauthors(@PathVariable Long poetryId, @RequestBody AddCoauthorRequest request) throws Exception {
 
@@ -32,8 +33,7 @@ public class CoauthorController {
 
         return ResponseEntity.ok(response);
     }
-
-
+    
     @GetMapping("/{poetryId}/coauthors")
     public ResponseEntity<List<CoauthorResponse>> getAllCoauthors(@PathVariable Long poetryId) throws Exception {
 
