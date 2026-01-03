@@ -1,9 +1,13 @@
 package com.poetry.poetry_documentation_reporting.controller;
 
+import com.poetry.poetry_documentation_reporting.model.PoetryAnalytics;
 import com.poetry.poetry_documentation_reporting.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/poetry/analytics")
@@ -22,5 +26,17 @@ public class PoetryAnalyticsController {
     public ResponseEntity<Void> addLike(@PathVariable Long poetryId) {
         analyticsService.addLike(poetryId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<PoetryAnalytics>> getPoetryAnalyticsAll() throws Exception {
+        List<PoetryAnalytics> analyticsList = analyticsService.getAllPoetryAnalytics();
+        return new ResponseEntity<>(analyticsList, HttpStatus.OK);
+    }
+
+    @GetMapping("/{analyticId}")
+    public ResponseEntity<PoetryAnalytics> getPoetryAnalytic(@PathVariable Long analyticId) throws Exception {
+        PoetryAnalytics analytics = analyticsService.getPoetryAnalytics(analyticId);
+        return new ResponseEntity<>(analytics, HttpStatus.OK);
     }
 }

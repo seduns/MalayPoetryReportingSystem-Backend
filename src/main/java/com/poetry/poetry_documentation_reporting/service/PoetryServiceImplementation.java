@@ -5,11 +5,14 @@ import com.poetry.poetry_documentation_reporting.model.*;
 import com.poetry.poetry_documentation_reporting.repository.*;
 import com.poetry.poetry_documentation_reporting.request.PoetryRequest;
 import com.poetry.poetry_documentation_reporting.response.PoetryStatusResponse;
+import com.poetry.poetry_documentation_reporting.response.StatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PoetryServiceImplementation implements PoetryService {
@@ -31,68 +34,63 @@ public class PoetryServiceImplementation implements PoetryService {
 
     @Transactional
     @Override
-    public Poetry createPoetry(PoetryRequest request, Long authorId, List<String> coauthorPublicIds) {
-
-        // 1. Create Poetry
+    public Poetry createPoetry(PoetryRequest request, Long authorId) { // Hapus parameter ketiga
         Poetry poetry = new Poetry();
         poetry.setTitle(request.getTitle());
         poetry.setContent(request.getContent());
         poetry.setCategory(request.getCategory());
         poetry.setDescription(request.getDescription());
 
-        // 2. Owner (Author)
         Author owner = authorRepository.findById(authorId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Author not found with ID: " + authorId
                 ));
         poetry.setAuthor(owner);
 
-        // 3. Default status (PENDING)
         PoetryStatus status = poetryStatusRepository.findByName("PENDING")
                 .orElseThrow(() -> new IllegalArgumentException(
                         "PoetryStatus PENDING not found"
                 ));
         poetry.setStatus(status);
 
-        // 4. Coauthors (resolve by publicId)
+        // Gunakan dari request
+        List<String> coauthorPublicIds = request.getCoauthorPublicIds();
+
         if (coauthorPublicIds != null && !coauthorPublicIds.isEmpty()) {
-
-            List<Coauthor> coauthors = new java.util.ArrayList<>();
-
+            List<Coauthor> coauthors = new ArrayList<>();
             for (String publicId : coauthorPublicIds) {
-
+                System.out.println("Current public ID: " + publicId);
                 Author coauthorAuthor = authorRepository.findByPublicId(publicId)
                         .orElseThrow(() -> new IllegalArgumentException(
                                 "Coauthor not found with publicId: " + publicId
                         ));
 
                 Coauthor coauthor = new Coauthor();
-                coauthor.setPoetry(poetry);   // owning side
+                coauthor.setPoetry(poetry);
                 coauthor.setAuthor(coauthorAuthor);
 
                 coauthors.add(coauthor);
             }
 
-            poetry.setCoauthors(coauthors); // inverse side
+            poetry.setCoauthors(coauthors);
         }
 
-        // 5. Analytics (auto create)
+        // Analytics & donation...
         PoetryAnalytics analytics = new PoetryAnalytics();
         analytics.setPoetry(poetry);
         analytics.setLikeCount(0);
         analytics.setViewCount(0);
         poetry.setAnalytics(analytics);
 
-        // 6. Donation (auto create)
         Donation donation = new Donation();
         donation.setPoetry(poetry);
         donation.setDonationCount(1);
         donation.setDonationValue(0.0);
         poetry.setDonation(donation);
 
-        // 7. Save (cascade saves everything)
         return poetryRepository.save(poetry);
     }
+
 
     @Transactional
     @Override
@@ -145,6 +143,27 @@ public class PoetryServiceImplementation implements PoetryService {
                 newStatus.getName()
         );
     }
+
+    @Override
+    public String deletePoetry(Long id) {
+        StatusResponse status = new StatusResponse();
+        try {
+            if (!poetryRepository.existsById(id)) {
+                return "poetry_not_found";
+            }
+
+            poetryRepository.deleteById(id);
+            return "delete_poetry_success";
+        } catch (Exception e) {
+            return "delete_poetry_failed";
+        }
+    }
+
+    @Override
+    public List<Poetry> getPoetryByAuthorId(Long authorId) throws Exception {
+        return poetryRepository.findByAuthorId(authorId);
+    }
+
 
     @Override
     public Poetry getPoetry(Long poetryId) {

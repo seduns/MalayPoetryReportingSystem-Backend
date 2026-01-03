@@ -1,5 +1,6 @@
 package com.poetry.poetry_documentation_reporting.service;
 
+import com.poetry.poetry_documentation_reporting.model.Author;
 import com.poetry.poetry_documentation_reporting.model.Coauthor;
 import com.poetry.poetry_documentation_reporting.model.Poetry;
 
@@ -12,5 +13,7 @@ public interface CoauthorService {
 
     // get all poetry co author
     public List<Coauthor> getAllCoauthor(long poetryId) throws Exception;
+
+    public Author checkAuthorbyPublicId(String publicId) throws Exception;
 
 }

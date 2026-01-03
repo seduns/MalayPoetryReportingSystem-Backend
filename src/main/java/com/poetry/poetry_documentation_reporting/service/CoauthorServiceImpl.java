@@ -1,6 +1,7 @@
 package com.poetry.poetry_documentation_reporting.service;
 
 
+import com.poetry.poetry_documentation_reporting.exception.UserNotFoundException;
 import com.poetry.poetry_documentation_reporting.model.Author;
 import com.poetry.poetry_documentation_reporting.model.Coauthor;
 import com.poetry.poetry_documentation_reporting.model.Poetry;
@@ -83,5 +84,11 @@ public class CoauthorServiceImpl implements CoauthorService {
         }
 
         return coauthorRepository.findByPoetry_Id(poetryId);
+    }
+
+    @Override
+    public Author checkAuthorbyPublicId(String publicId) throws Exception {
+        return authorRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new UserNotFoundException("author not found"));
     }
 }

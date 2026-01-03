@@ -27,7 +27,7 @@ public class PoetryRequest {
     private CATEGORY_POETRY category;
 
     // List of coauthor IDs (if they already exist) or names depending on your use case
-    private List<String> coauthors;
+    private List<String> coauthorPublicIds;
 
 }
 
