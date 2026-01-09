@@ -1,5 +1,6 @@
 package com.poetry.poetry_documentation_reporting.model;
 
+import com.poetry.poetry_documentation_reporting.model.enumoption.USER_STATUS;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,9 @@ public class Admin {
     @MapsId
     @JoinColumn(name = "id")
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    private USER_STATUS status;
 
 
 }

@@ -9,6 +9,7 @@ import com.poetry.poetry_documentation_reporting.response.MonitorDonationRespons
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DonationService {
 
@@ -25,5 +26,8 @@ public interface DonationService {
 
     // get list of donation
     public List<MonitorDonationResponse> getListOfDonation() throws Exception;
+
+    // get donation by poetry id
+    public Donation getDonationByPoetryId(long poetryId) throws Exception;
 
 }

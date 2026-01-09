@@ -1,6 +1,7 @@
 package com.poetry.poetry_documentation_reporting.service;
 
 import com.poetry.poetry_documentation_reporting.exception.DonationNotFoundException;
+import com.poetry.poetry_documentation_reporting.exception.PoetryNotFoundException;
 import com.poetry.poetry_documentation_reporting.exception.UserNotFoundException;
 import com.poetry.poetry_documentation_reporting.exception.WithdrawDonationOutOfDonation;
 import com.poetry.poetry_documentation_reporting.model.Author;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DonationServiceImplementation implements DonationService {
@@ -91,6 +93,13 @@ public class DonationServiceImplementation implements DonationService {
                 }).toList();
 
         return monitorDonationResponses;
+    }
+
+    @Override
+    public Donation getDonationByPoetryId(long poetryId) throws Exception {
+        return donationRepository.findByPoetryId(poetryId)
+                .orElseThrow(() -> new PoetryNotFoundException("poetry_not_found"));
+
     }
 
 

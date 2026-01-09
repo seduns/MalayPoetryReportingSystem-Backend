@@ -29,7 +29,7 @@ public class AppConfig {
         http.sessionManagement(mgmt -> mgmt.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/poetry/**").hasAnyAuthority("USER_AUTHOR", "PUBLIC")
+                        .requestMatchers("/poetry/**").hasAnyAuthority("USER_AUTHOR", "USER_PUBLIC", "USER_ADMIN")
                         .requestMatchers("/api/product/**").hasAnyRole("CUSTOMER", "MANAGER")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
@@ -44,8 +44,8 @@ public class AppConfig {
     private CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration cfg = new CorsConfiguration();
-            cfg.setAllowedOrigins(List.of("http://localhost:5173"));
-            cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            cfg.setAllowedOrigins(List.of("http://localhost:5173", "http://192.168.1.217:5173", "https://deanna-unspilt-idalia.ngrok-free.dev"));
+            cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
             cfg.setAllowedHeaders(List.of("Authorization", "Content-Type"));
             cfg.setExposedHeaders(List.of("Authorization"));
             cfg.setAllowCredentials(true);

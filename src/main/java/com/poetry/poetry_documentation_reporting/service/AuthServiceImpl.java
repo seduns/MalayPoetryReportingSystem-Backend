@@ -3,11 +3,13 @@ package com.poetry.poetry_documentation_reporting.service;
 import com.poetry.poetry_documentation_reporting.config.JwtProvider;
 import com.poetry.poetry_documentation_reporting.controller.AuthController;
 import com.poetry.poetry_documentation_reporting.exception.EmailAlreadyExistsException;
+import com.poetry.poetry_documentation_reporting.model.Admin;
 import com.poetry.poetry_documentation_reporting.model.Author;
 import com.poetry.poetry_documentation_reporting.model.Public;
 import com.poetry.poetry_documentation_reporting.model.User;
 import com.poetry.poetry_documentation_reporting.model.enumoption.USER_ROLE;
 import com.poetry.poetry_documentation_reporting.model.enumoption.USER_STATUS;
+import com.poetry.poetry_documentation_reporting.repository.AdminRespository;
 import com.poetry.poetry_documentation_reporting.repository.AuthRepository;
 import com.poetry.poetry_documentation_reporting.repository.AuthorRepository;
 import com.poetry.poetry_documentation_reporting.repository.PublicRepository;
@@ -37,6 +39,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private AuthorRepository authorRepository;
+
+    @Autowired
+    private AdminRespository adminRespository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -95,6 +100,11 @@ public class AuthServiceImpl implements AuthService {
             author.setPublicId(publicId);
             authorRepository.save(author);
             System.out.println("Created Author with publicId: " + publicId);
+        } else if (user.getRole() == USER_ROLE.USER_ADMIN) {
+            Admin  admin = new Admin();
+            admin.setUser(savedUser); // @MapsId → ID auto ikut User ID
+            admin.setStatus(USER_STATUS.STATUS_ACTIVE);
+            adminRespository.save(admin);
         }
 
         Authentication authentication = authenticationManager.authenticate(

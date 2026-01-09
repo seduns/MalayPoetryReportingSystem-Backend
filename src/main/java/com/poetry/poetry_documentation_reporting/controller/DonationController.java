@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/donation")
@@ -55,6 +56,12 @@ public class DonationController {
     public ResponseEntity<List<MonitorDonationResponse>> getAllDonationList() throws Exception {
         List<MonitorDonationResponse> listOfDonation = donationService.getListOfDonation();
         return new ResponseEntity<>(listOfDonation, HttpStatus.OK);
+    }
+
+    @GetMapping("/poetry/{poetryId}")
+    public ResponseEntity<Donation> viewDonationByPoetryId(@PathVariable long poetryId) throws Exception {
+        Donation donation = donationService.getDonationByPoetryId(poetryId);
+        return new ResponseEntity<>(donation, HttpStatus.OK);
     }
 
 }
