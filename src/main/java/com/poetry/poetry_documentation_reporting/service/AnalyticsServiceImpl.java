@@ -10,10 +10,13 @@ import com.poetry.poetry_documentation_reporting.repository.PoetryAnalyticsRepos
 import com.poetry.poetry_documentation_reporting.repository.PoetryRepository;
 import com.poetry.poetry_documentation_reporting.repository.UserRepository;
 import com.poetry.poetry_documentation_reporting.response.AdminDashboardStatsResponse;
+import com.poetry.poetry_documentation_reporting.response.AuthorDashboardResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,5 +90,28 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 .totalDonationAmount(donationRepository.getGrandTotalDonationValue())
                 .build();
     }
+
+    @Override
+    public AuthorDashboardResponse authorDashbaord(long authorId) {
+        // 2. Fetch Card Data
+        long publishedCount = poetryRepository.countPublishedPoetryByAuthor(authorId);
+        long totalViews = analyticsRepository.sumViewsByAuthor(authorId);
+        long totalLikes = analyticsRepository.sumLikesByAuthor(authorId);
+        Double totalDonation = donationRepository.sumDonationByAuthor(authorId);
+
+        // 3. Fetch Chart Data (Top 5)
+        var topViewed = analyticsRepository.findTopViewedPoetryByAuthor(authorId, PageRequest.of(0, 5));
+        var topDonated = donationRepository.findTopDonationPoetryByAuthor(authorId, PageRequest.of(0, 5));
+
+        // 4. Build Response
+        return AuthorDashboardResponse.builder()
+                .totalPublishedPoetry(publishedCount)
+                .totalViews(totalViews)
+                .totalLikes(totalLikes)
+                .totalDonation(totalDonation)
+                .topViewedPoetry(topViewed)
+                .topDonatedPoetry(topDonated)
+                .build();
     }
+}
 

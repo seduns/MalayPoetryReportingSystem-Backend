@@ -2,6 +2,7 @@ package com.poetry.poetry_documentation_reporting.controller;
 
 import com.poetry.poetry_documentation_reporting.model.PoetryAnalytics;
 import com.poetry.poetry_documentation_reporting.response.AdminDashboardStatsResponse;
+import com.poetry.poetry_documentation_reporting.response.AuthorDashboardResponse;
 import com.poetry.poetry_documentation_reporting.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,5 +46,10 @@ public class PoetryAnalyticsController {
     public ResponseEntity<AdminDashboardStatsResponse> getDashboardStats() throws Exception {
         AdminDashboardStatsResponse stats = analyticsService.adminDashboard();
         return ResponseEntity.ok(stats);
+    }
+
+    @GetMapping("/dashboard/author/{authorId}")
+    public ResponseEntity<AuthorDashboardResponse> getDashboard(@PathVariable Long authorId) {
+        return ResponseEntity.ok(analyticsService.authorDashbaord(authorId));
     }
 }

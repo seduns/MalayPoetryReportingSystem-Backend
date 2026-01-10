@@ -5,10 +5,12 @@ import com.poetry.poetry_documentation_reporting.model.Donation;
 import com.poetry.poetry_documentation_reporting.model.Poetry;
 import com.poetry.poetry_documentation_reporting.model.PoetryAnalytics;
 import com.poetry.poetry_documentation_reporting.response.AuthorDonationSummaryResponse;
+import com.poetry.poetry_documentation_reporting.response.PoetryChartData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,5 +45,16 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
 
     @Query("SELECT COALESCE(SUM(d.donationValue), 0.0) FROM Donation d")
     Double getGrandTotalDonationValue();
+
+    // Card: Total Donation for Author
+    @Query("SELECT COALESCE(SUM(d.donationValue), 0.0) FROM Donation d WHERE d.poetry.author.user.id = :userId")
+    Double sumDonationByAuthor(@Param("userId") Long userId);
+
+    @Query("SELECT new com.poetry.poetry_documentation_reporting.response.PoetryChartData(" +
+            "d.poetry.title, d.donationValue, 0.0) " +
+            "FROM Donation d " +
+            "WHERE d.poetry.author.user.id = :userId " +
+            "ORDER BY d.donationValue DESC")
+    List<PoetryChartData> findTopDonationPoetryByAuthor(@Param("userId") Long userId, Pageable pageable);
 
 }
