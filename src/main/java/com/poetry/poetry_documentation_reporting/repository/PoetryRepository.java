@@ -22,4 +22,8 @@ public interface PoetryRepository extends JpaRepository<Poetry, Long> {
 
     List<Poetry> findByAuthorId(Long authorId);
 
+    @Query("SELECT COUNT(p) FROM Poetry p WHERE p.status.name = 'APPROVED'")
+    long countApprovedPoetry();
+
+
 }

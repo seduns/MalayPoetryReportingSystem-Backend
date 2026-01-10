@@ -1,6 +1,7 @@
 package com.poetry.poetry_documentation_reporting.controller;
 
 import com.poetry.poetry_documentation_reporting.model.PoetryAnalytics;
+import com.poetry.poetry_documentation_reporting.response.AdminDashboardStatsResponse;
 import com.poetry.poetry_documentation_reporting.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,5 +39,11 @@ public class PoetryAnalyticsController {
     public ResponseEntity<PoetryAnalytics> getPoetryAnalytic(@PathVariable Long analyticId) throws Exception {
         PoetryAnalytics analytics = analyticsService.getPoetryAnalytics(analyticId);
         return new ResponseEntity<>(analytics, HttpStatus.OK);
+    }
+
+    @GetMapping("/dashboard/admin")
+    public ResponseEntity<AdminDashboardStatsResponse> getDashboardStats() throws Exception {
+        AdminDashboardStatsResponse stats = analyticsService.adminDashboard();
+        return ResponseEntity.ok(stats);
     }
 }

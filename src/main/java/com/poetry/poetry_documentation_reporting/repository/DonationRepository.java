@@ -38,6 +38,10 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
 
     Optional<Donation> findByPoetryId(long poetryId);
 
+    @Query("SELECT COALESCE(SUM(d.donationCount), 0) FROM Donation d")
+    long getGrandTotalDonationCount();
 
+    @Query("SELECT COALESCE(SUM(d.donationValue), 0.0) FROM Donation d")
+    Double getGrandTotalDonationValue();
 
 }
