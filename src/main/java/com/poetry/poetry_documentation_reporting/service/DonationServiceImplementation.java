@@ -73,21 +73,49 @@ public class DonationServiceImplementation implements DonationService {
         return author;
     }
 
+//    @Override
+//    public List<MonitorDonationResponse> getListOfDonation() throws Exception {
+//
+//        List<Donation> donationList = donationRepository.findAll();
+//        List<MonitorDonationResponse> monitorDonationResponses = donationList.stream()
+//                .map(donation -> {
+//                    Poetry poetry = donation.getPoetry();
+//                    Author author = poetry.getAuthor();
+//                    User user = author.getUser();
+//
+//                    return new MonitorDonationResponse(
+//                            poetry.getTitle(),
+//                            user.getFullName(),
+//                            donation.getDonationCount(),
+//                            donation.getDonationValue()
+//                    );
+//
+//                }).toList();
+//
+//        return monitorDonationResponses;
+//    }
+
     @Override
     public List<MonitorDonationResponse> getListOfDonation() throws Exception {
 
         List<Donation> donationList = donationRepository.findAll();
+
         List<MonitorDonationResponse> monitorDonationResponses = donationList.stream()
                 .map(donation -> {
                     Poetry poetry = donation.getPoetry();
                     Author author = poetry.getAuthor();
                     User user = author.getUser();
 
+                    // ✅ EXTRACT STATUS HERE
+                    // We check for null just in case, to prevent crashes
+                    String statusName = (poetry.getStatus() != null) ? poetry.getStatus().getName() : "UNKNOWN";
+
                     return new MonitorDonationResponse(
                             poetry.getTitle(),
                             user.getFullName(),
                             donation.getDonationCount(),
-                            donation.getDonationValue()
+                            donation.getDonationValue(),
+                            statusName // ✅ PASS STATUS TO CONSTRUCTOR
                     );
 
                 }).toList();
@@ -96,6 +124,7 @@ public class DonationServiceImplementation implements DonationService {
     }
 
     @Override
+
     public Donation getDonationByPoetryId(long poetryId) throws Exception {
         return donationRepository.findByPoetryId(poetryId)
                 .orElseThrow(() -> new PoetryNotFoundException("poetry_not_found"));

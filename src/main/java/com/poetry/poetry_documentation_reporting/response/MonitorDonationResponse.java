@@ -13,6 +13,7 @@ public class MonitorDonationResponse {
     private String poetryOwner;
     private int donationCount;
     private double donationAmount;
+    private String Status;
 
 
 }
